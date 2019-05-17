@@ -1,0 +1,50 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="header">
+    <img src="../../assets/ibm.png" style="width:125px;height:125px">
+    <p class="font-weight-normal">Single Point of Visibility</p>
+  </div>
+
+
+<br><br><br>
+<div class="col-sm-3 alignCenter" >
+  
+    
+    <div class="card">
+    <article class="card-body">
+        <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
+        <hr>
+        
+        <form>
+        <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+             </div>
+            <input name="username" class="form-control" placeholder="IBM ID" type="text" [(ngModel)]="username">
+        </div> <!-- input-group.// -->
+        </div> <!-- form-group// -->
+        <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+             </div>
+            <input class="form-control" placeholder="******" type="password" [(ngModel)]="password" name="password">
+        </div> <!-- input-group.// -->
+        </div> <!-- form-group// -->
+        <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block" (click)="loginUser()"> Login  </button>
+        </div> <!-- form-group// -->
+        
+        </form>
+        <div *ngIf="InvalidLogin">
+            Your Username or Password is Incorrect !
+        </div>
+    </article>
+    </div> <!-- card.// -->
+    
+</div> <!-- col.// -->
+

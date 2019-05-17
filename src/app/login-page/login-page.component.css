@@ -1,0 +1,17 @@
+.header {
+    padding: 3px;
+    text-align: center;
+    background: #f8f8f8;
+    color: rgb(15, 30, 116);
+    font-size: 25px;
+}
+
+.alignCenter {
+    
+    margin: auto;
+}
+
+.changeColour {
+    background: #f8f8f8;
+    height: 100%;
+}

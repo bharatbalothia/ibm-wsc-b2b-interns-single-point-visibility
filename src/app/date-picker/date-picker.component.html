@@ -1,0 +1,65 @@
+<link href="https://unpkg.com/treeflex/dist/css/treeflex.css" rel="stylesheet">
+
+<div class="header">
+  <p>IBM</p>
+  <p>Single Point of Visibility</p>
+</div>
+<br>
+<div>
+  From Date :
+  <input type="date" [(ngModel)]="startDate">
+  <br><br>
+  To Date :
+  <input type="date" [(ngModel)]="endDate">
+  <br><br>
+  <button (click)="searchByDate(startDate,endDate)">Search</button>
+  
+  <br><br>
+  {{endDate}}
+  <br><br>
+  {{startDate}}
+  <br><br><br>
+  <table class="rightSide" *ngIf = "visibilityTable">
+    <tr>
+      <th>File ID</th>
+      <th>Date</th>
+      <th>Contents</th>
+    </tr>
+    <tr *ngFor="let item of searchedResults">
+      <td (click)="handleListButtonClick(item)">{{item.id}}</td>
+      <td (click)="handleListButtonClick(item)">{{item.date}}</td>
+      <td (click)="handleListButtonClick(item)">{{item.text}}</td>  
+    </tr>
+  </table>
+  
+
+  
+  <!--  <ul class="rightSide">
+      <li *ngFor="let item of searchedResults" >
+         <button (click)="handleListButtonClick(item)">{{item.id + " " + item.date + " " + item.text}}</button>
+      </li>
+    </ul>
+  <br>
+  -->
+  <div id="overlay">
+    <button (click)="hideOverlay()" class="hideOverlayClass">Hide Overlay</button>
+    <h3>{{dummyText}}</h3>
+    <div class="tf-tree tf-gap-lg" *ngIf="visibility">
+      <ul>
+        <li>
+          <span class="tf-nc">{{dummy.id}}</span>
+          <ul>
+            <li>
+              <span class="tf-nc">{{dummy.date}}</span>
+            
+            </li>
+            <li>
+              <span class="tf-nc">{{dummy.text}}</span>
+            
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>  
+    </div>
+</div>  

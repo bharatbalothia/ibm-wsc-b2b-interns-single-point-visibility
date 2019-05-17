@@ -1,0 +1,49 @@
+.rightSide {
+    position: absolute;
+    left:500px;
+    top:200px;
+}
+
+.middleOfScreen {
+    position: absolute;
+    left: 500px;
+    top: 200px;
+}
+
+#overlay {
+    position: fixed; /* Sit on top of the page content */
+    margin-top: 300px;
+    margin-left: 500px;
+    display: none; /* Hidden by default */
+    width: 450px; /* Full width (cover the whole page) */
+    height: 50%; /* Full height (cover the whole page) */
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255,1); /* Black background with opacity */
+    z-index: 10; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    border: 1px solid black;
+}
+
+  .header {
+      padding: 3px;
+      text-align: center;
+      background: #1a60bc;
+      color: white;
+      font-size: 25px;
+  }
+
+  table, th, td {
+      border: 1px solid black;
+  }
+
+  td {
+      width: 200px;
+  }
+
+  .hideOverlayClass {
+      margin-top: 10px;
+      margin-left: 350px;
+  }

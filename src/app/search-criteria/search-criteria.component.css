@@ -1,0 +1,133 @@
+
+body {
+  overflow-x: hidden;
+}
+
+.header {
+    padding: 3px;
+    text-align: center;
+    background: #f8f8f8;
+    color: rgb(15, 30, 116);
+    font-size: 25px;
+    overflow: hidden;
+    width: 100%;
+    position: fixed;
+    z-index: 10;
+}
+
+.alignNumberofColumns {
+  position: absolute;
+  top : 90px;
+  left: 400px;
+}
+
+.leftHeader {
+  overflow: hidden;
+  border-right: 1px solid blue;
+  width: 24%; 
+  height: 100%;
+  
+   
+}
+
+.resultsOrientation {
+ position: relative;
+ left: 10px;  
+}
+
+.content {
+  overflow : auto;
+  
+  
+}
+
+.alignInputBox {
+    position: absolute;
+    left: 125px;
+}
+
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+
+  .tableAlignment {
+    position: absolute;
+    left: 400px;
+    top: 125px;
+    
+  }
+
+  .button {
+    background-color: rgb(42, 72, 168);
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: px;
+    margin: 4px 2px;
+    border-radius: 8px;
+  }
+
+  .alignIBMLogo {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+  }
+  
+  .alignLogoutButton {
+    position: absolute;
+    left: 1450px;
+    top: 5px;
+  }
+
+  .alignUserID {
+    position: absolute;
+    left: 1200px;
+    top: 5px;
+    
+  }
+
+  #overlay {
+    position: fixed; /* Sit on top of the page content */
+    margin-top: 10px;
+    margin-left: 10px;
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255,1); /* Black background with opacity */
+    z-index: 10; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    border: 1px solid black;
+    overflow-y: scroll;
+    align-content: center;
+}
+
+.hideOverlayClass {
+  margin-top: 10px;
+  margin-left: 1450px;
+}
+
+.alignTree {
+  position: absolute;
+  left: 500px;
+}

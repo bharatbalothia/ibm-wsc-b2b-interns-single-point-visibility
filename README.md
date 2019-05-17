@@ -1,2 +1,1 @@
-# single-point-visibility
-Single Point Visibility
+# Single Point of Visibility

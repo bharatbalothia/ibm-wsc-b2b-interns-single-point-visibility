@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://unpkg.com/treeflex/dist/css/treeflex.css" rel="stylesheet">
+
+<div class="header">
+  <img src="../../assets/ibm.png" style="width:60px;height:60px" class="alignIBMLogo">
+  <p class="font-weight-normal">Single Point of Visibility</p>
+  <p class="alignUserID">{{userID}}</p>
+  <button class="button btn-sm alignLogoutButton" routerLink="/">Logout</button>
+</div>
+<br><br><br><br>
+<div class="leftHeader">
+&nbsp;&nbsp;Search Criteria : <br> <br>
+&nbsp;&nbsp;From Date: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="datetime-local" [(ngModel)]="fromDate"><br><br>
+&nbsp;&nbsp;To Date: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="datetime-local" [(ngModel)]="ToDate"> <br><br>
+<div *ngFor="let tag of displayTags; let i = index">
+  &nbsp;&nbsp;{{tag + "  :  "}}
+  <input type="text" [(ngModel)]="tagValues[i]" class="alignInputBox">
+</div>
+<br>
+&nbsp;&nbsp;<input type="text" list="searchTags" [(ngModel)]="selectedDropdown">
+
+<datalist id="searchTags" >
+  <option *ngFor="let tag1 of tags" value="{{tag1.key}}"></option>
+</datalist>
+<!-- {{selectedDropdown}}-->
+&nbsp;
+<button (click)="addTag()" class="button btn-sm">+</button>
+&nbsp;
+<button (click)="searchQuery()" class="button btn-sm">Search</button><br>
+<br>
+&nbsp;&nbsp;<button class="button btn-sm" (click)="saveSearch()">Save Search</button>
+&nbsp;&nbsp;&nbsp;<button (click)="showStatus()" class="button btn-sm">What's Wrong ?</button>
+
+</div>
+
+<div class="alignNumberofColumns" *ngIf="displayNumberofColumns">
+Number of Columns : &nbsp;
+<select [(ngModel)]="Number_of_Columns">
+  <option value="5">5</option>
+  <option value="10">10</option>
+</select>
+</div>
+
+<div class="content">
+<div class="table-responsive tableAlignment">
+<table class="table">
+  <tr>
+    <th *ngFor="let item of columnValues | slice:0:Number_of_Columns">
+      {{item}}
+    </th>
+  </tr>
+  <tr *ngFor="let item1 of rowValues | paginate: { itemsPerPage: 5, currentPage: p};let i = index" id="{{'rowNumber' + i}}">
+    <td *ngFor="let item2 of item1 | slice:0:Number_of_Columns" (click)="makeTree(item1)">{{item2}}</td>
+  </tr>
+</table>
+<pagination-controls (pageChange)="p = $event" *ngIf="displayPagination"></pagination-controls>
+</div>
+<div id="overlay">
+  <button (click)="hideOverlay()" class="hideOverlayClass button btn-sm">X</button>
+  <h3>{{dummyText}}</h3>
+  <div class="tf-tree tf-gap-lg alignTree" *ngIf="treeVisibility">
+    <ul>
+      <li>
+        <span class="tf-nc">{{FileID}}</span>
+        <ul>
+          <li *ngIf="eventsDisplay[0]">
+            <span class="tf-nc" (click)="displayEventsTable(eventsArray[0])" id="event0">{{eventsArray[0].Event_ID}}</span>
+          
+          </li>
+          <li *ngIf="eventsDisplay[1]">
+            <span class="tf-nc" (click)="displayEventsTable(eventsArray[1])" id="event1">{{eventsArray[1].Event_ID}}</span>
+          
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <table class="table table-responsive" *ngIf="eventsTableVisibility">  
+    <tr *ngFor="let item3 of rowValues1">
+      <td *ngFor="let item4 of item3">{{item4}}</td>
+    </tr>
+  </table>
+  </div>
+  </div>
