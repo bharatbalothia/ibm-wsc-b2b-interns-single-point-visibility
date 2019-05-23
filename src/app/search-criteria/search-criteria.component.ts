@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
@@ -39,6 +39,11 @@ export class SearchCriteriaComponent implements OnInit {
   ToDate;
   Number_of_Columns : Number;
   displayNumberofColumns = false;
+  dropdownList = [];
+  dropdownSettings = {};
+  selectedItems = [];
+  RevisionNumber = "";
+
 
   constructor(private http : HttpClient, private bnIdle: BnNgIdleService, 
     private router: Router, public activateRoute: ActivatedRoute) {
@@ -56,6 +61,7 @@ export class SearchCriteriaComponent implements OnInit {
     let savedSearch = 
       {
         "User_ID" : this.userID,
+        "RevisionNumber": this.RevisionNumber,
         "File_ID" : "",
         "Orig_FileName" : "",
         "File_Size" : "",
@@ -65,12 +71,12 @@ export class SearchCriteriaComponent implements OnInit {
         "Event_ID" : "",
         "Parent_Document_ID" : "",
         "Child_Document_ID" : "",
-        "Number_Of_Columns" : ""
+        "Number_Of_Columns" : []
       };
     for (let i = 0; i < this.displayTags.length; i++) {
       savedSearch[this.displayTags[i]] = this.tagValues[i];
     }
-    savedSearch["Number_Of_Columns"] = "" + this.Number_of_Columns;
+    savedSearch["Number_Of_Columns"] = this.selectedItems;
     console.log(savedSearch);
     this.http.post("http://spv1.fyre.ibm.com:3535/saveSearch",savedSearch).subscribe(
       data => {
@@ -80,6 +86,13 @@ export class SearchCriteriaComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  @HostListener('window:keyup',['$event'])
+  keyEvent(event : KeyboardEvent) {
+    if (event.keyCode === 27) {
+      this.hideOverlay();
+    }
   }
 
   loadSearch() : void {
@@ -101,7 +114,8 @@ export class SearchCriteriaComponent implements OnInit {
             this.tagValues.push(desiredObject2[key]);
           }
         }
-        this.Number_of_Columns = desiredObject2["Number_Of_Columns"];
+        this.selectedItems = desiredObject2["Number_Of_Columns"];
+        this.RevisionNumber = desiredObject2["_rev"];
         console.log(this.Number_of_Columns);
         for (let i = 0; i < this.displayTags.length; i++) {
           for (let j = 0; j < this.tags.length; j++) {
@@ -202,12 +216,26 @@ export class SearchCriteriaComponent implements OnInit {
         for (let key in this.filesArray[0]) {
           this.columnValues.push(key)
         }
+        for (let i = 0; i < this.columnValues.length; i++) {
+          this.dropdownList.push({ item_id : i + 1, item_text: this.columnValues[i]});
+        }
+        this.columnValues = [];
+        for (let i = 0; i < this.selectedItems.length;i++) {
+          let dumdum = {};
+          dumdum = this.selectedItems[i];
+          /*if (dumdum['item_text'] == 'events') {
+            continue;
+          } */
+          this.columnValues.push(dumdum['item_text']);
+        }
+
         for (let obj1 of this.filesArray) {
           let dummy = [];
           
           for (let item of this.columnValues) {
             dummy.push(obj1[item]);
           }
+          //dummy.push(obj1['events'])
           this.rowValues.push(dummy);
         }
         this.displayPagination = true;
@@ -307,6 +335,15 @@ export class SearchCriteriaComponent implements OnInit {
     this.fromDate = new Date(temp1).toISOString().split('.')[0];
     console.log(this.fromDate);
     console.log(this.ToDate);
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: true
+    };
     
    }
 

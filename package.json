@@ -28,6 +28,7 @@
     "ibm_bluepages": "^1.1.5",
     "jquery": "^3.4.0",
     "ldapjs": "^1.0.2",
+    "ng-multiselect-dropdown": "^0.2.3",
     "ng2-org-chart": "^1.1.2",
     "ngx-pagination": "^3.2.1",
     "nodegrass": "0.0.3",

@@ -11,6 +11,7 @@ import { FilterPipe } from './filter.pipe';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,  
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgMultiSelectDropDownModule.forRoot()
 
   ],
   providers: [BnNgIdleService],
