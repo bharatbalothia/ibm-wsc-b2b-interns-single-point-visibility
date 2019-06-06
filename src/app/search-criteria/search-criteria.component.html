@@ -20,7 +20,7 @@
 &nbsp;&nbsp;<input type="text" list="searchTags" [(ngModel)]="selectedDropdown">
 
 <datalist id="searchTags" >
-  <option *ngFor="let tag1 of tags" value="{{tag1.key}}"></option>
+  <option *ngFor="let tag1 of tags" value="{{tag1}}"></option>
 </datalist>
 <!-- {{selectedDropdown}}-->
 &nbsp;
@@ -30,6 +30,8 @@
 <br>
 &nbsp;&nbsp;<button class="button btn-sm" (click)="saveSearch()">Save Search</button>
 &nbsp;&nbsp;&nbsp;<button (click)="showStatus()" class="button btn-sm">What's Wrong ?</button>
+
+
 
 
 </div>
@@ -50,8 +52,8 @@
 <div class="table-responsive tableAlignment">
 <table class="table">
   <tr>
-    <th *ngFor="let item of columnValues">
-      {{item}}
+    <th *ngFor="let item of columnValues; let z = index; trackBy:trackByIdx">
+      <input type="text" [(ngModel)]=columnValues[z].new_tag>
     </th>
   </tr>
   <tr *ngFor="let item1 of rowValues | paginate: { itemsPerPage: 5, currentPage: p};let i = index" id="{{'rowNumber' + i}}">

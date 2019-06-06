@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild, HostListener} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BnNgIdleService } from 'bn-ng-idle';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { Observable } from 'rxjs';
-declare var $;
+
 
 
 @Component({
@@ -13,9 +12,7 @@ declare var $;
 })
 export class SearchCriteriaComponent implements OnInit {
 
-  @ViewChild('dataTable') table;
-  state$ : Observable<object>;
-  dataTable: any;
+ 
   tags = [];
   fileDetails = {};
   selectedDropdown;
@@ -43,20 +40,27 @@ export class SearchCriteriaComponent implements OnInit {
   dropdownSettings = {};
   selectedItems = [];
   RevisionNumber = "";
+  columnMapping = [];
 
 
   constructor(private http : HttpClient, private bnIdle: BnNgIdleService, 
     private router: Router, public activateRoute: ActivatedRoute) {
     this.userID = router.getCurrentNavigation().extras.state["user"];
     //Session Timeout of 5 minutes
-    this.bnIdle.startWatching(300).subscribe((res) => {
+    /*this.bnIdle.startWatching(300).subscribe((res) => {
       if(res) {
         this.router.navigate(['']);
 
       }
-    })  
+    })*/  
   }
 
+  
+
+  trackByIdx(index: number, obj: any): any {
+    return index;
+  }
+  
   saveSearch() : void {
     let savedSearch = 
       {
@@ -71,12 +75,19 @@ export class SearchCriteriaComponent implements OnInit {
         "Event_ID" : "",
         "Parent_Document_ID" : "",
         "Child_Document_ID" : "",
-        "Number_Of_Columns" : []
+        "Number_Of_Columns" : [],
+        "Column_Mapping" : []
       };
     for (let i = 0; i < this.displayTags.length; i++) {
-      savedSearch[this.displayTags[i]] = this.tagValues[i];
+      for (let j = 0; j < this.columnMapping.length; j++) {
+        if (this.displayTags[i] == this.columnMapping[j].new_tag) {
+          savedSearch[this.columnMapping[j].orig_tag] = this.tagValues[i];
+        }
+      }
+      
     }
     savedSearch["Number_Of_Columns"] = this.selectedItems;
+    savedSearch["Column_Mapping"] = this.columnMapping;
     console.log(savedSearch);
     this.http.post("http://spv1.fyre.ibm.com:3535/saveSearch",savedSearch).subscribe(
       data => {
@@ -105,25 +116,29 @@ export class SearchCriteriaComponent implements OnInit {
         let desiredObject = data["rows"];
         let desiredObject1 = desiredObject[0];
         let desiredObject2 = desiredObject1["value"];
+        this.columnMapping = desiredObject2["Column_Mapping"];
+        console.log("Column Mapping : " + this.columnMapping);
         for (let key in desiredObject2) {
-          if (key == "_id" || key == "Number_Of_Columns" || key == "type" || key == "_rev") {
+          if (key == "_id" || key == "Number_Of_Columns" || key == "type" || key == "_rev" || key == "Column_Mapping") {
             continue;
           }
           if (desiredObject2[key] != "") {
-            this.displayTags.push(key);
-            this.tagValues.push(desiredObject2[key]);
+            console.log(key);
+            for (let j = 0; j < this.columnMapping.length;j++) {
+              let dummy = this.columnMapping[j];
+              //console.log(this.columnMapping[j].orig_tag);
+              if (key == dummy['orig_tag']) {
+                console.log("Key : " + key);
+                this.displayTags.push(dummy['new_tag']);
+                this.tagValues.push(desiredObject2[key]);
+              }
+            }
           }
         }
         this.selectedItems = desiredObject2["Number_Of_Columns"];
         this.RevisionNumber = desiredObject2["_rev"];
         console.log(this.Number_of_Columns);
-        for (let i = 0; i < this.displayTags.length; i++) {
-          for (let j = 0; j < this.tags.length; j++) {
-            if (this.displayTags[i] == this.tags[j].key) {
-              this.tags.splice(j,1);
-            }
-        }
-        }
+        this.getTags();
         this.searchQuery();
         
         
@@ -199,7 +214,11 @@ export class SearchCriteriaComponent implements OnInit {
     };
     
     for (let i = 0; i < this.displayTags.length; i++) {
-      queryObject.variables[this.displayTags[i]] = this.tagValues[i]; 
+      for (let j = 0; j < this.columnMapping.length; j++) {
+        if (this.displayTags[i] == this.columnMapping[j].new_tag) {
+          queryObject.variables[this.columnMapping[j].orig_tag] = this.tagValues[i]; 
+        }
+      }
     }
 
     this.columnValues = [];
@@ -215,9 +234,10 @@ export class SearchCriteriaComponent implements OnInit {
         console.log(this.filesArray);
         for (let key in this.filesArray[0]) {
           this.columnValues.push(key)
+          
         }
-        for (let i = 0; i < this.columnValues.length; i++) {
-          this.dropdownList.push({ item_id : i + 1, item_text: this.columnValues[i]});
+        for (let i = 0; i < this.columnMapping.length; i++) {
+          this.dropdownList.push({ item_id : i + 1, item_text: this.columnMapping[i].new_tag});
         }
         this.columnValues = [];
         for (let i = 0; i < this.selectedItems.length;i++) {
@@ -226,14 +246,25 @@ export class SearchCriteriaComponent implements OnInit {
           /*if (dumdum['item_text'] == 'events') {
             continue;
           } */
-          this.columnValues.push(dumdum['item_text']);
+          //console.log(dumdum);
+          for (let j = 0; j < this.columnMapping.length; j++) {
+            let dummy = this.columnMapping[j];
+            //console.log(dummy);
+            if (dumdum['item_text'] === dummy['new_tag']) {
+              //console.log(dummy);
+              this.columnValues.push(dummy)
+            }
+          }
+                    
         }
+        console.log(this.columnValues);
 
         for (let obj1 of this.filesArray) {
           let dummy = [];
           
           for (let item of this.columnValues) {
-            dummy.push(obj1[item]);
+            
+            dummy.push(obj1[item.orig_tag]);
           }
           //dummy.push(obj1['events'])
           this.rowValues.push(dummy);
@@ -248,31 +279,6 @@ export class SearchCriteriaComponent implements OnInit {
     
 
     
-    /*this.query = "http://spv1.fyre.ibm.com:5000/get_events_by_filters?tag="+this.displayTags[0] +"&filterValue=" + this.tagValues[0];
-    return this.http.get(this.query)
-    .subscribe((data:any[])  => {
-      console.log("We got", data);
-      this.displayResults = data;
-      let obj = this.displayResults[0];
-        //console.log(obj);
-        for (let key in obj["value"]) {
-          this.columnValues.push(key);
-        }
-      for (let obj1 of this.displayResults) {
-        let dummy = [];
-        let obj2 = obj1["value"];
-        for (let item of this.columnValues) {
-          dummy.push(obj2[item]);
-        }
-        this.rowValues.push(dummy);
-      }
-      console.log(this.rowValues);
-      //console.log(this.columnValues);
-      //console.log(this.tags);
-      /*this.tagsArray = this.tags["tags"];   
-      console.log(this.tagsArray);
-      
-    }); */
   }
   
   
@@ -311,22 +317,25 @@ export class SearchCriteriaComponent implements OnInit {
   }
 
   getTags() {
-    this.tags = [{"key":"File_ID","value":"File ID"},{"key":"Orig_FileName","value":"Orig FileName"},{"key":"File_Size","value":"File Size"},{"key":"Start_Time","value":"Start Time"},{"key":"Mailbox","value":"Mailbox"},{"key":"Payload","value":"Payload"},{"key":"Event_ID","value":"Event ID"},{"key":"Parent_Document_ID","value":"Parent Document ID"},{"key":"Child_Document_ID","value":"Child Document ID"}];
+    console.log(this.columnMapping);
+    for (let j = 0; j < this.columnMapping.length; j++) {
+      this.tags.push(this.columnMapping[j].new_tag);
+    }
+    console.log(this.tags);
+    for (let i = 0; i < this.displayTags.length; i++) {
+      for (let j = 0; j < this.tags.length; j++) {
+        if (this.displayTags[i] == this.tags[j].key) {
+          this.tags.splice(j,1);
+        }
+    }
+    }
     
-    /*return this.http.get("http://spv1.fyre.ibm.com:5000/get_tags")
-    .subscribe((data:any[])  => {
-      console.log("We got", data);
-      this.tags = data;
-      //console.log(this.tags);
-      /*this.tagsArray = this.tags["tags"];   
-      console.log(this.tagsArray);
-      
-    }); */
+    
   }
   
   ngOnInit() { 
-    this.getTags();  
     this.loadSearch();
+    
     let today = new Date();
     this.Number_of_Columns = 10;
     let temp = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate()) + ' ' + (today.getHours() + 5) + ':' + ((today.getMinutes() + 30) % 60);
